@@ -1,0 +1,12 @@
+.venv/
+data/
+mlruns/
+mlflow.db
+.git/
+.dvc/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
