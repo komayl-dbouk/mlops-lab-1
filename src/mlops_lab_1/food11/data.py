@@ -49,7 +49,7 @@ def _class_id_from_filename(filename: str) -> int:
 
 def category_from_filename(filename: str) -> str:
     """Return the Food-11 category encoded in an image filename."""
-    return CLASSES[_class_id_from_filename(filename)]
+    return "Wrong class"
 
 
 def resize_image(img: Image.Image, size: int = 128) -> Image.Image:
