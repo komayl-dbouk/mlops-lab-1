@@ -5,13 +5,15 @@ from __future__ import annotations
 import io
 import os
 from contextlib import asynccontextmanager
+from typing import Annotated
 
-import mlflow
 import numpy as np
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from PIL import Image
 from pydantic import BaseModel
 from torchvision import transforms
+
+import mlflow
 
 from .data import CLASS_NAMES
 
@@ -36,8 +38,9 @@ model: mlflow.pyfunc.PyFuncModel | None = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global model
-    mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
-    model = mlflow.pyfunc.load_model(MODEL_URI)
+    if not os.environ.get("SKIP_MODEL"):
+        mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+        model = mlflow.pyfunc.load_model(MODEL_URI)
     yield
 
 
@@ -55,7 +58,7 @@ def health() -> dict[str, str]:
 
 
 @app.post("/predict", response_model=PredictResponse)
-async def predict(file: UploadFile = File(...)) -> PredictResponse:
+async def predict(file: Annotated[UploadFile, File()]) -> PredictResponse:
     if model is None:
         raise HTTPException(status_code=503, detail="Model not loaded")
 
